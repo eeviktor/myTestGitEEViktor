@@ -1,0 +1,53 @@
+
+#include <stdio.h>
+
+void exchange(int &a, int &b) {
+    int tmp = a;
+    a = b;
+    b = tmp;
+}
+
+int partition(int a[], int low, int high) {
+    int pivot = a[high];
+    int i = low -1;
+    
+    for (int j = low; j < high; ++j) {
+
+        if (a[j] < pivot) {
+            ++i;
+            exchange(a[i], a[j]);
+        }
+    }
+    exchange(a[++i], a[high]);
+    return i;
+}
+
+void quick_sort(int a[], int left, int right) {
+    
+    if (left >= right) return;
+    
+    int middle = partition(a, left, right);
+    
+    quick_sort(a, left, middle-1);
+    quick_sort(a, middle+1, right);
+}
+
+int main()
+{
+    printf("my quick sort\n");
+    int A[] = {9, 6, 3, 1, 7, 4, 5, 8, 0, 2};
+    
+    quick_sort(A, 0, 9);
+    
+    for (size_t i = 0; i < 10; ++i) {
+        printf("%d ", A[i]);
+    }
+    
+    printf ("\n");
+    
+
+    return 0;
+}
+
+
+
