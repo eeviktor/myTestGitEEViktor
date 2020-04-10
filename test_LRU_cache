@@ -1,0 +1,89 @@
+
+#include <stdio.h>
+#include <map>
+#include <list>
+#include <iostream>
+#include <iterator>
+#include <utility>
+
+// here simple with int key and int value, otherwise
+// template< typename key_type, typename value_type>
+class LRU {
+    typedef std::pair<int, int> listElement;
+    std::map<int, std::list<listElement>::iterator > myMap;
+    std::list<listElement> myList;
+    
+    std::size_t myCap;
+    
+public:
+    explicit LRU(int mysize) : myCap(mysize) {}
+    
+    // return -1 if not hit, otherwise got value_type
+    int getValue(const int key) {
+        if (myMap.find(key) != myMap.end()) {
+            std::list<listElement>::iterator valIter = myMap[key];
+            int valRet = valIter->second;
+            myList.push_front(std::make_pair(valIter->first, valIter->second));
+            myMap[key] = myList.begin();
+            myList.erase(valIter);
+            return valRet;
+        }
+        
+        return -1;
+        
+    }
+    
+    void setValue(int key, int value) {
+        if (myMap.find(key) != myMap.end()){
+            std::list<listElement>::iterator valIter = myMap[key];
+            myMap.erase(key);
+            myList.erase(valIter);
+        }
+        
+        myList.push_front(std::make_pair(key, value));
+        myMap[key] = myList.begin();
+        
+        if (myList.size() > myCap) {
+            myMap.erase(myList.back().first);
+            myList.pop_back();
+        }
+    }
+    
+    void print() {
+        std::cout << "map size : " << myMap.size() << " ";
+        for (std::map<int, std::list<listElement>::iterator>::iterator it = myMap.begin(); it != myMap.end(); ++it) {
+            std::cout  << it->first << "_vs_" << (*(it->second)).second << " ";
+        }
+        std::cout << std::endl;
+    }
+        
+};
+
+int main()
+{
+    printf("Test least recent used cache\n");
+    
+    LRU myLRU(3);
+    
+    myLRU.setValue(2, 20);
+    myLRU.print();
+    myLRU.setValue(3, 30);
+     myLRU.print();
+    myLRU.setValue(4, 40);
+     myLRU.print();
+    myLRU.setValue(5, 50);
+     myLRU.print();
+    
+    //hit, return 40
+    std::cout << "key 4 value is: " << myLRU.getValue(4) << std::endl;
+    
+    //miss, return -1
+    std::cout << "key 2 value is: " << myLRU.getValue(2) << std::endl;
+    
+
+    return 0;
+}
+
+
+
+

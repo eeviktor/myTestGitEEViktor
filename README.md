@@ -1,3 +1,3 @@
 # myTestGitEEViktor
-To test how to use github
-Any difference in readme after first commit
+To test by adding some c++ code
+
