@@ -1,0 +1,31 @@
+
+#include <stdio.h>
+#include <vector>
+#include <iostream>
+
+// current floor = array[drops][egges]
+int minNumberEggDrops(int egges, int floors) {
+    std::vector<std::vector<int> > myDp(floors+1, std::vector<int>(egges+1));
+    int drops = 0;
+    while (myDp[drops][egges] < floors) {
+        ++drops;
+        for (int i = 1; i <= egges; ++i) {
+            myDp[drops][i] = myDp[drops -1][i - 1] + myDp[drops - 1][i] + 1;
+        }
+    }
+    return drops;
+}
+
+
+int main()
+{
+    printf("two eggs droped from 100 floor, the min drops! ");
+
+    std::cout << " \n for 2 egges and 100 floors: " << minNumberEggDrops(2, 100) << std::endl;
+    
+    std::cout << " for 3 egges and 100 floors: " << minNumberEggDrops(3, 100) << std::endl;
+    
+    std::cout << " for 4 egges and 50 floors: " << minNumberEggDrops(4, 50) << std::endl;
+    return 0;
+}
+
