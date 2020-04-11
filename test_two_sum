@@ -1,0 +1,50 @@
+
+#include <stdio.h>
+#include <iostream>
+#include <utility>
+#include <unordered_map>
+
+typedef std::pair<std::size_t, std::size_t> MyPair;
+MyPair twoSumUnOrderInput(int a[], int len, int target) {
+
+    std::unordered_map<int, std::size_t> myMap;
+    
+    for (std::size_t i = 0; i < len; ++i) {
+        myMap[a[i]] = i;
+        int j = target - a[i];
+        if (myMap.count(j)) {
+            return std::make_pair(a[i], myMap[j]);
+        }
+    }
+}
+
+MyPair twoSumOrderInput(int a[], int len, int target) {
+     std::size_t i = 0;
+     std::size_t j = len - 1;
+    
+    while (i < j) {
+        long sum = a[i] + a[j]; 
+        
+        if (sum == target) {
+            return std::make_pair(i, j);
+        } 
+        else if ( sum > target ) { --j; }
+        else { ++i; }
+    }
+}
+int main()
+{
+    printf("two sum, ordered input\n");
+
+    MyPair retPair;
+    
+    int b[] = {2, 7, 5, 8, 4};
+    retPair = twoSumUnOrderInput(b, 5, 11);
+    std::cout << retPair.first << "_" << retPair.second << std::endl;
+
+    int c[] = {2, 4, 5, 7, 8};
+    retPair = twoSumOrderInput(c, 5, 11);
+    std::cout << retPair.first << "_" << retPair.second << std::endl;
+    
+    return 0;
+}
