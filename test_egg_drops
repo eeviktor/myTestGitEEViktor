@@ -3,7 +3,11 @@
 #include <vector>
 #include <iostream>
 
-// current floor = array[drops][egges]
+// trick: current floor = array[drops][egges]
+// don't use array[egges][floors]
+// 2 egges, 100 floors equation :  n + (n-1) + (n-2) ... + 1 > 100
+// solve equation " n(n+1)/2 > 100 " to get " n = 14 "
+
 int minNumberEggDrops(int egges, int floors) {
     std::vector<std::vector<int> > myDp(floors+1, std::vector<int>(egges+1));
     int drops = 0;
