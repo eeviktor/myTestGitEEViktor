@@ -1,0 +1,159 @@
+/******************************************************************************
+Two great ways: Priority_Queue(heap) and MultiSet (self-balanced binary tree)
+*******************************************************************************/
+#include <stdio.h>
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <utility>
+#include <set> // for AVL self-balanced tree
+#include <iterator>
+
+class MedianFinderAVL {
+    /***
+     * Self-balancing Binary Search Trees (like an AVL Tree) 
+     * maintain the tree's height to a logarithmic bound. 
+     * The median always is the root and/or one of its children. 
+     * Most languages implement a multiset class with AVL tree. 
+    */
+    std::multiset<int> myAVLTree;
+    typedef std::multiset<int>::iterator MedianIter;
+    MedianIter highB; 
+    MedianIter lowB;
+public:
+    MedianFinderAVL() {
+
+    }
+    
+    void addNum(int num) {
+        myAVLTree.insert(num);
+        // insert value does not alter iterator?
+        
+        if (myAVLTree.size() == 1) {
+            highB = lowB = myAVLTree.begin();
+            return;
+        }
+        
+        if (lowB != highB) {
+            if (num >= *lowB and num < *highB)
+            {
+                ++lowB; --highB;
+            }
+            else if (num < *lowB) 
+            {
+                --highB;
+            }
+            else 
+            {
+                ++lowB;
+            }
+        }
+        else
+        {
+            if (num >= *lowB and num < *highB)
+            {
+                ++lowB; --highB;
+            }
+            else if (num < *lowB) 
+            {
+                --lowB;
+            }
+            else 
+            {
+                ++highB;
+            }
+        }
+        
+    }
+    
+    double findMedian() {
+        if (lowB != highB) {
+            return double((*lowB + *highB) * 0.5);
+        }
+        else
+        {
+            return double((*lowB) * 1.0);
+        }
+        
+    }
+};
+
+class MedianFinder {
+    std::priority_queue<int> lowSection;
+    std::priority_queue<int, std::vector<int>, std::greater<int> > highSection;
+public:
+    /** initialize your data structure here. */
+    MedianFinder() {
+        
+    }
+    
+    void addNum(int num) {
+        if (lowSection.empty() || highSection.empty()) {
+            highSection.push(num);
+            
+            if (highSection.size() > 1) {
+                int tmp = highSection.top();
+                highSection.pop();
+                lowSection.push(tmp);
+            }
+        }
+        else {
+            int low = lowSection.top();
+            int high = highSection.top();
+            
+            if (num >= low) {
+                highSection.push(num);
+                if (highSection.size() > lowSection.size() + 1) {
+                    int tmp = highSection.top();
+                    highSection.pop();
+                    lowSection.push(tmp);
+                }
+            }
+            else {
+                lowSection.push(num);
+                if (lowSection.size() > highSection.size()) {
+                    int tmp = lowSection.top();
+                    lowSection.pop();
+                    highSection.push(tmp);
+                } 
+            }
+        }
+    }
+    
+    double findMedian() {
+        if (highSection.empty()) return 0.0;
+        if (highSection.size() > lowSection.size()) {
+            return double(highSection.top());
+        }
+        else {
+            return (double(highSection.top()) + lowSection.top()) * 0.5; 
+        }
+    }
+};
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder* obj = new MedianFinder();
+ * obj->addNum(num);
+ * double param_2 = obj->findMedian();
+ */
+ 
+int main()
+{
+    printf("median of data stream \n");
+
+    { 
+        MedianFinder* obj = new MedianFinder();
+    }
+    
+    MedianFinderAVL* obj = new MedianFinderAVL();
+    
+    obj->addNum(1);
+    std::cout << obj->findMedian() << std::endl;
+    obj->addNum(2);
+    std::cout << obj->findMedian() << std::endl;
+    obj->addNum(3);
+    std::cout << obj->findMedian() << std::endl;
+    
+    return 0;
+}
