@@ -1,0 +1,71 @@
+
+#include <stdio.h>
+#include <iostream>
+#include <mutex>
+#include <thread>
+#include <functional>
+
+void printFirst() { std::cout << "\n Both m1, m2 locked, thread T1 can run,  \n"
+                              << " then release m1 \n";}
+void printSecond() {std::cout << "\n After T1, now T2 can own m1, then run \n"
+                              << " it will release both m1, m2 at the end. \n";}
+void printThird() {std::cout << "\n After T2, now T3 owns m2, it releases m2 at the end.\n"
+                             << " otherwise, next T3 run will be deadlock-ed!\n";}
+
+
+class Foo {
+    std::mutex m1;
+    std::mutex m2;
+public:
+    Foo() {
+        m1.lock();
+        m2.lock();
+    }
+
+    void first(std::function<void()> printFirst) {
+        
+        // printFirst() outputs "first". Do not change or remove this line.
+        printFirst();
+        m1.unlock();
+    }
+
+    void second(std::function<void()> printSecond) {
+        
+        // printSecond() outputs "second". Do not change or remove this line.
+        m1.lock();
+        printSecond();
+        m1.unlock();
+        m2.unlock();
+    }
+
+    void third(std::function<void()> printThird) {
+        
+        // printThird() outputs "third". Do not change or remove this line.
+        m2.lock();
+        printThird();
+        m2.unlock();
+    }
+    
+    void run() {
+        
+        std::thread myT1(&Foo::first, this, printFirst);
+        std::thread myT2(&Foo::second, this, printSecond);
+        std::thread myT3(&Foo::third, this, printThird);
+    
+        myT1.join();
+        myT2.join();
+        myT3.join();
+    }
+};
+
+
+int main()
+{
+    printf(" threads run orderly 1, 2, 3, read print out to understand. \n");
+    
+    Foo myFoo;
+    
+    myFoo.run();
+
+    return 0;
+}
