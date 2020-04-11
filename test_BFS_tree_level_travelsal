@@ -1,0 +1,80 @@
+
+#include <stdio.h>
+#include <queue>
+#include <iostream>
+
+struct Node {
+    int val;
+    Node * left;
+    Node * right;
+    
+    Node(int v) : val(v) {
+        left = right = nullptr;
+    }
+};
+
+// level travesal print
+void inOrderPrint(Node* node) {
+    if (!node) { return;}
+        
+    inOrderPrint(node->left);
+        
+    std::cout << " " << node->val;
+        
+    inOrderPrint(node->right);
+}
+    
+Node* levelTravelInsert(Node * head, int val) {
+    Node* newNode = new Node (val);
+    
+    if (head == nullptr) {
+        head = newNode;
+        return head;
+    }
+    
+    std::queue<Node*> myQueue;
+    myQueue.push(head);
+    
+    while (!myQueue.empty()) {
+        Node* tmpNode = myQueue.front();
+        myQueue.pop();
+        
+        if (tmpNode->left) {
+            myQueue.push(tmpNode->left);
+        }
+        else {
+            tmpNode->left = newNode;
+            break;
+        }
+        
+        if (tmpNode->right) {
+            myQueue.push(tmpNode->right);
+        }
+        else {
+            tmpNode->right = newNode;
+            break;
+        }
+    }
+    
+    return head;
+}
+
+
+int main()
+{
+    printf(" tree BFS, level order travelsal to insert a node. \n");
+    
+    Node * head = nullptr; // new Node (5);
+    
+    // weird return head ptr!
+    head = levelTravelInsert(head, 9);
+    head = levelTravelInsert(head, 7);
+    head = levelTravelInsert(head, 3);
+    
+    inOrderPrint(head);
+    
+
+    return 0;
+}
+
+
