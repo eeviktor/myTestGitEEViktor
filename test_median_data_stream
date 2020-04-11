@@ -28,6 +28,9 @@ public:
     void addNum(int num) {
         myAVLTree.insert(num);
         // insert value does not alter iterator?
+        // from c++ standard:The insert members shall NOT affect the validity 
+        // of iterators and references to the container, and the erase members shall 
+        // invalidate only iterators and references to the erased elements.
         
         if (myAVLTree.size() == 1) {
             highB = lowB = myAVLTree.begin();
