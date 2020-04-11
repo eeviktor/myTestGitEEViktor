@@ -1,0 +1,128 @@
+
+#include <stdio.h>
+#include <iostream>
+#include <climits>
+
+class MyMinHeap
+{
+    std::size_t myHeapCap;
+    int* myHeapArray;  //std::vector
+    
+    // this index is very important 
+    std::size_t myHeapIndex; 
+    
+    void swap(int *a, int *b) {
+        int tmp = *a;
+        *a = *b;
+        *b = tmp;
+    }
+    
+    int getParent(std::size_t i) {return (i-1)/2;}
+    int getLeftNode(std::size_t i) {return 2*i + 1;}
+    int getRightNode(std::size_t i) {return 2*i + 2;}
+    
+    void heapify(std::size_t i) {
+        
+        std::size_t small = i;
+        
+        // top-down level order travelsal
+        int left = getLeftNode(i);
+        if ( left < myHeapIndex and myHeapArray[left] <= myHeapArray[small]) {
+            small = left;
+        }
+        int right = getRightNode(i);
+        if (right < myHeapIndex and myHeapArray[right] <= myHeapArray[small]) {
+            small = right;
+        }
+        
+        if (small != i) {
+            swap(&myHeapArray[i], &myHeapArray[small]);
+            heapify(small);
+        }
+    }
+    
+    void buildHeap() {
+        // bottom up
+        // from the last non-leaf, do reverse level order travelsal
+        int i = getParent(myHeapIndex - 1);
+        while (i >= 0) {
+            heapify(i);
+            --i;
+        }
+    }
+    
+public:
+    explicit MyMinHeap(int n) : myHeapCap(n) {
+        myHeapArray = new int[myHeapCap];
+        myHeapIndex = 0;
+    }
+    
+    ~MyMinHeap() { delete [] myHeapArray; }
+    
+    int getMinFromRoot() {
+        if (myHeapIndex < myHeapCap)
+            return INT_MIN;
+        return myHeapArray[0];
+    }
+    
+    void input(const int val) {
+        if (myHeapIndex < myHeapCap) 
+        {
+            myHeapArray[myHeapIndex++] = val;
+            buildHeap();
+        }
+        else
+        {
+            if (val < getMinFromRoot()) return;
+            else
+            {
+                myHeapArray[0] = val;
+                heapify(0);
+            }
+        }
+        
+    }
+    
+    void print() {
+        for (std::size_t i = 0; i < myHeapIndex; ++i) {
+            std::cout << "  " << myHeapArray[i];
+        }
+        std::cout << " and the root is: " << getMinFromRoot() << "\n";
+    }
+};
+
+
+int main()
+{
+    //unittest drive
+    printf("find the K-th, here 5, largest number from stream input, etc\n");
+    
+    MyMinHeap myMinHeap(5);
+    myMinHeap.input(7);
+    myMinHeap.input(6);
+    myMinHeap.print();
+    
+    myMinHeap.input(5);
+    myMinHeap.input(8);
+    myMinHeap.print();
+    
+    myMinHeap.input(3);
+    myMinHeap.print();
+    
+    myMinHeap.input(9);
+    myMinHeap.print();
+        
+    myMinHeap.input(2);
+    myMinHeap.print();
+    
+    myMinHeap.input(4);
+    myMinHeap.print();
+    
+    myMinHeap.input(8);
+    myMinHeap.print();
+    
+    return 0;
+}
+
+
+
