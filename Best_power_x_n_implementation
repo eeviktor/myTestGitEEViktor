@@ -1,0 +1,21 @@
+// personally this is the best solution.
+
+class Solution {
+public:
+    double myPow(double x, int n) {
+        // inverse at beginning!    
+        if (n < 0)  x = 1.0/x;
+        double ret = 1.0;
+        while (n) {
+            if (n % 2) {
+                ret *= x;
+            }
+            // smart to change 'ret'!
+            x *= x;
+            
+            n /= 2;
+        }
+        
+        return ret;        
+    }
+};
